@@ -31,8 +31,10 @@ int main(int argc, char *argv[]) {
 
   // Client loop
   while(1) {
-    sleep(5);
-    printf("connected to server\n");
+    printf("MSG: \n");
+    scanf("%s", buffer);
+    printf("buffer contents: %s\n", buffer);
+    send(sock_fd, buffer, 1024, 0);
   }
 
   close(sock_fd);

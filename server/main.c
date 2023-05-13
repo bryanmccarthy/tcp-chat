@@ -75,8 +75,17 @@ int main(int argc, char *argv[]) {
 
 void *handle_client(void *arg) {
   int client_fd = *(int *)arg;
+  char buffer[1024] = {0};
 
-  printf("thread to handle client");
+  // Thread loop
+  while(1) {
+    if(read(client_fd, buffer, 1024) == 0) {
+      break;
+    }
 
+    printf("Message from client: %s\n", buffer);
+  }
+
+  close(client_fd);
   pthread_exit(NULL);
 }
