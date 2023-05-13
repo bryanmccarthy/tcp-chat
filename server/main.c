@@ -4,12 +4,15 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <pthread.h>
 
 #define PORT 8080
 #define MAX_CLIENTS 50
 
-int main(int argc, char *argv[]) {
+// Function declarations
+void *handle_client(void *arg);
 
+int main(int argc, char *argv[]) {
   int server_fd, client_fd, opt = 1;
   struct sockaddr_in server_addr;
   int addrlen = sizeof(server_addr);
@@ -54,10 +57,26 @@ int main(int argc, char *argv[]) {
     }
 
     printf("Connection made, client address: %s\n", inet_ntoa(server_addr.sin_addr));
-    
+
+    // Handle client in thread
+    pthread_t thread;
+    if(pthread_create(&thread, NULL, handle_client, (void *)&client_fd) < 0 ) {
+      perror("pthread_create failed"); 
+      exit(EXIT_FAILURE);
+    }
+
+    pthread_join(thread, NULL);
   }
 
   close(server_fd);
 
   return 0;
+}
+
+void *handle_client(void *arg) {
+  int client_fd = *(int *)arg;
+
+  printf("thread to handle client");
+
+  pthread_exit(NULL);
 }
