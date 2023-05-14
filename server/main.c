@@ -7,6 +7,7 @@
 #include <pthread.h>
 
 #define PORT 8080
+#define BUFFER_MAX 1024
 
 // Function declarations
 void *handle_client(void *arg);
@@ -15,7 +16,7 @@ int main(int argc, char *argv[]) {
   int server_fd, client_fd, opt = 1;
   struct sockaddr_in server_addr;
   int addrlen = sizeof(server_addr);
-  char buffer[1024] = {0};
+  char buffer[BUFFER_MAX] = {0};
 
   if((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
     perror("socket failed");
@@ -74,11 +75,11 @@ int main(int argc, char *argv[]) {
 
 void *handle_client(void *arg) {
   int client_fd = *(int *)arg;
-  char buffer[1024] = {0};
+  char buffer[BUFFER_MAX] = {0};
 
   // Thread loop
   while(1) {
-    if(read(client_fd, buffer, 1024) == 0) {
+    if(read(client_fd, buffer, BUFFER_MAX) == 0) {
       break;
     }
 
