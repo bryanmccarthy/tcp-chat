@@ -9,7 +9,6 @@
 #define PORT 8080
 #define BUFFER_MAX 1024
 
-// Function declarations
 void *handle_client(void *arg);
 
 int main(int argc, char *argv[]) {
@@ -81,6 +80,13 @@ void *handle_client(void *arg) {
   while(1) {
     if(read(client_fd, buffer, BUFFER_MAX) == 0) {
       break;
+    }
+
+    if(strcmp(buffer, "quit") == 0) {
+      printf("Client %d has disconnected\n", client_fd);
+      close(client_fd);
+      pthread_exit(NULL);
+      return NULL;
     }
 
     printf("Message from client: %s\n", buffer);

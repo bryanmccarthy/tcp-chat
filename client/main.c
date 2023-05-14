@@ -6,9 +6,12 @@
 
 #define PORT 8080
 
+void handle_interrupt(int sig);
+
+static int sock_fd;
+
 int main(int argc, char *argv[]) {
 
-  int sock_fd, valread;
   struct sockaddr_in server_addr;
   char buffer[1024] = {0};
 
@@ -29,6 +32,9 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
+  // Signal handler for interrupt
+  signal(SIGINT, handle_interrupt);
+
   // Client loop
   while(1) {
     printf("MSG: \n");
@@ -40,4 +46,13 @@ int main(int argc, char *argv[]) {
   close(sock_fd);
 
   return 0;
+}
+
+void handle_interrupt(int sig) {
+  if(send(sock_fd, "quit", 1024, 0) < 0) {
+    perror("send failed");
+  }
+
+  close(sock_fd);
+  exit(1);
 }
