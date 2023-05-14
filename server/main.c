@@ -7,7 +7,6 @@
 #include <pthread.h>
 
 #define PORT 8080
-#define MAX_CLIENTS 50
 
 // Function declarations
 void *handle_client(void *arg);
