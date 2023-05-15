@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 
 #define PORT 8080
+#define BUFFER_MAX 1024
 
 void handle_interrupt(int sig);
 
@@ -13,7 +14,7 @@ static int sock_fd;
 int main(int argc, char *argv[]) {
 
   struct sockaddr_in server_addr;
-  char buffer[1024] = {0};
+  char buffer[BUFFER_MAX] = {0};
 
   // Create socket file descriptor
   if((sock_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -40,7 +41,7 @@ int main(int argc, char *argv[]) {
     printf("MSG: \n");
     scanf("%s", buffer);
     printf("buffer contents: %s\n", buffer);
-    send(sock_fd, buffer, 1024, 0);
+    send(sock_fd, buffer, BUFFER_MAX, 0);
   }
 
   close(sock_fd);
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
 }
 
 void handle_interrupt(int sig) {
-  if(send(sock_fd, "quit", 1024, 0) < 0) {
+  if(send(sock_fd, "quit", BUFFER_MAX, 0) < 0) {
     perror("send failed");
   }
 
