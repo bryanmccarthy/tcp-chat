@@ -110,8 +110,9 @@ void *handle_client(void *arg) {
 
   // Thread loop
   while(1) {
-    if(read(client_fd, buffer, BUFFER_MAX) == 0) {
-      break;
+    if(read(client_fd, buffer, BUFFER_MAX) < 0) {
+      perror("read failed");
+      exit(EXIT_FAILURE);
     }
 
     if(strcmp(buffer, "quit") == 0) {

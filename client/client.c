@@ -62,16 +62,16 @@ void *handle_receive_broadcast(void *arg) {
   char buffer[BUFFER_MAX] = {0};
 
   while(1) {
-    if(read(sock_fd, buffer, BUFFER_MAX) == 0) {
-      break;
+    if(read(sock_fd, buffer, BUFFER_MAX) < 0) {
+      perror("read failed");
+      exit(EXIT_FAILURE);
     } 
 
     if(strcmp(buffer, "Room full") == 0) {
       printf("Room full, connection refused");
       exit(0);
     }
-    
-    // TODO: fix when exiting
+
     printf("broadcast msg: %s\n", buffer);
   }
 
