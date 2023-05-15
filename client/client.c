@@ -49,7 +49,10 @@ int main(int argc, char *argv[]) {
   while(1) {
     printf("MSG: \n");
     scanf("%s", buffer);
-    send(sock_fd, buffer, BUFFER_MAX, 0);
+    if(send(sock_fd, buffer, BUFFER_MAX, 0) < 0) {
+      perror("send failed");
+      exit(EXIT_FAILURE);
+    }
   }
 
   close(sock_fd);

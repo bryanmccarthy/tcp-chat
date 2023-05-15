@@ -122,9 +122,13 @@ void *handle_client(void *arg) {
     } else {
       // Broadcast Message
       printf("Message from client (%d): %s\n", client_fd, buffer);
-      if(send(client_fd, buffer, BUFFER_MAX, 0) < 0) {
-        perror("send failed");
-        exit(EXIT_FAILURE);
+      for(int i = 0; i < 50; i++) {
+        if(clients[i] != 0) {
+          if(send(clients[i], buffer, BUFFER_MAX, 0) < 0) {
+            perror("send failed");
+            exit(EXIT_FAILURE);
+          }
+        }
       }
     }
   }
