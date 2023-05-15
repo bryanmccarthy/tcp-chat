@@ -63,8 +63,6 @@ int main(int argc, char *argv[]) {
       perror("pthread_create failed"); 
       exit(EXIT_FAILURE);
     }
-
-    pthread_join(thread, NULL);
   }
 
   close(server_fd);
