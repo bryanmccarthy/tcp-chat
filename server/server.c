@@ -19,6 +19,7 @@ int main(int argc, char *argv[]) {
   struct sockaddr_in server_addr;
   int addrlen = sizeof(server_addr);
   char buffer[BUFFER_MAX] = {0};
+  char room_full[32] = "Room full";
 
   if((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
     perror("socket failed");
@@ -58,6 +59,26 @@ int main(int argc, char *argv[]) {
       exit(EXIT_FAILURE);
     }
 
+    // Refuse connection if room full
+    if(num_clients == 1) {
+      printf("Room is full, refusing client %d\n", client_fd);
+      if(send(client_fd, room_full, strlen(room_full), 0) < 0) {
+        perror("send failed");
+        exit(EXIT_FAILURE);
+      }
+      close(client_fd);
+      continue;
+    }
+
+    // Add client to list of clients
+    for(int i = 0; i < 50; i++) {
+      if(clients[i] == 0) {
+        clients[i] = client_fd;
+        num_clients++;
+        break;
+      }
+    }
+
     printf("Connection made, client address: %s\n", inet_ntoa(server_addr.sin_addr));
 
     // Display the current number of clients
@@ -86,9 +107,6 @@ void *handle_client(void *arg) {
     pthread_exit(NULL);
     return NULL;
   }
-
-  // TODO: use lock here
-  num_clients = num_clients + 1;
 
   // Thread loop
   while(1) {

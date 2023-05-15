@@ -66,6 +66,11 @@ void *handle_receive_broadcast(void *arg) {
       break;
     } 
 
+    if(strcmp(buffer, "Room full") == 0) {
+      printf("Room full, connection refused");
+      exit(0);
+    }
+    
     // TODO: fix when exiting
     printf("broadcast msg: %s\n", buffer);
   }
