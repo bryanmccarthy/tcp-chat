@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Refuse connection if room full
-    if(num_clients == 1) {
+    if(num_clients == 50) {
       printf("Room is full, refusing client %d\n", client_fd);
       if(send(client_fd, room_full, strlen(room_full), 0) < 0) {
         perror("send failed");
