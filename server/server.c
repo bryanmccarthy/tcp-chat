@@ -11,6 +11,9 @@
 
 void *handle_client(void *arg);
 
+int clients[50] = {0};
+int num_clients = 0;
+
 int main(int argc, char *argv[]) {
   int server_fd, client_fd, opt = 1;
   struct sockaddr_in server_addr;
@@ -57,6 +60,9 @@ int main(int argc, char *argv[]) {
 
     printf("Connection made, client address: %s\n", inet_ntoa(server_addr.sin_addr));
 
+    // Display the current number of clients
+    printf("Clients connected: %d\n", num_clients);
+
     // Handle client in thread
     pthread_t thread;
     if(pthread_create(&thread, NULL, handle_client, (void *)&client_fd) < 0 ) {
@@ -74,6 +80,16 @@ void *handle_client(void *arg) {
   int client_fd = *(int *)arg;
   char buffer[BUFFER_MAX] = {0};
 
+  if(num_clients == 49) {
+    printf("Client %d refused, room is full", client_fd);
+    close(client_fd);
+    pthread_exit(NULL);
+    return NULL;
+  }
+
+  // TODO: use lock here
+  num_clients = num_clients + 1;
+
   // Thread loop
   while(1) {
     if(read(client_fd, buffer, BUFFER_MAX) == 0) {
@@ -82,12 +98,16 @@ void *handle_client(void *arg) {
 
     if(strcmp(buffer, "quit") == 0) {
       printf("Client %d has disconnected\n", client_fd);
-      close(client_fd);
-      pthread_exit(NULL);
-      return NULL;
+      num_clients = num_clients - 1;
+      break;
+    } else {
+      // Broadcast Message
+      printf("Message from client (%d): %s\n", client_fd, buffer);
+      if(send(client_fd, buffer, BUFFER_MAX, 0) < 0) {
+        perror("send failed");
+        exit(EXIT_FAILURE);
+      }
     }
-
-    printf("Message from client: %s\n", buffer);
   }
 
   close(client_fd);
