@@ -117,7 +117,15 @@ void *handle_client(void *arg) {
 
     if(strcmp(buffer, "quit") == 0) {
       printf("Client %d has disconnected\n", client_fd);
-      num_clients = num_clients - 1;
+      num_clients--;
+
+      // Remove client from list
+      for(int i = 0; i < 50; i++) {
+        if(clients[i] == client_fd) {
+          clients[i] = 0;
+        }
+      }
+
       break;
     } else {
       // Broadcast Message
