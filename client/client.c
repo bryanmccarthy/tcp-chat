@@ -15,7 +15,6 @@ void handle_interrupt(int sig);
 static int sock_fd;
 
 int main(int argc, char *argv[]) {
-
   struct sockaddr_in server_addr;
   char buffer[BUFFER_MAX] = {0};
   pthread_t thread;
@@ -26,7 +25,7 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  // Set server address
+  // Setup server address
   server_addr.sin_family = AF_INET;
   server_addr.sin_addr.s_addr = INADDR_ANY;
   server_addr.sin_port = htons(PORT);
@@ -56,7 +55,6 @@ int main(int argc, char *argv[]) {
   }
 
   close(sock_fd);
-
   return 0;
 }
 
