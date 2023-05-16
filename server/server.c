@@ -103,9 +103,7 @@ void *handle_client(void *arg) {
   char buffer[BUFFER_MAX] = {0};
   char message[BUFFER_MAX + 100] = {0};
 
-  // Beginning of message will include client fd
-  sprintf(message, "(client %d): ", client_fd);
-
+  
   if(num_clients == MAX_CLIENTS) {
     printf("Client %d refused, room is full", client_fd);
     close(client_fd);
@@ -115,6 +113,9 @@ void *handle_client(void *arg) {
 
   // Thread loop
   while(1) {
+    // Beginning of message will include client fd
+    sprintf(message, "(client %d): ", client_fd);
+
     if(read(client_fd, buffer, BUFFER_MAX) < 0) {
       perror("read failed");
       exit(EXIT_FAILURE);
@@ -144,6 +145,9 @@ void *handle_client(void *arg) {
           }
         }
       }
+
+      memset(buffer, 0, BUFFER_MAX);
+      memset(message, 0, BUFFER_MAX + 100);
     }
   }
 

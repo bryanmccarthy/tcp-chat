@@ -74,6 +74,7 @@ void *handle_receive_broadcast(void *arg) {
     }
 
     printf("> %s\n", buffer);
+    memset(buffer, 0, BUFFER_MAX);
   }
 
   close(sock_fd);
