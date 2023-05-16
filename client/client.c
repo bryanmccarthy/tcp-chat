@@ -73,7 +73,7 @@ void *handle_receive_broadcast(void *arg) {
       exit(0);
     }
 
-    printf("broadcast msg: %s\n", buffer);
+    printf("> %s\n", buffer);
   }
 
   close(sock_fd);

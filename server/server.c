@@ -101,6 +101,10 @@ int main(int argc, char *argv[]) {
 void *handle_client(void *arg) {
   int client_fd = *(int *)arg;
   char buffer[BUFFER_MAX] = {0};
+  char message[BUFFER_MAX + 100] = {0};
+
+  // Beginning of message will include client fd
+  sprintf(message, "(client %d): ", client_fd);
 
   if(num_clients == MAX_CLIENTS) {
     printf("Client %d refused, room is full", client_fd);
@@ -130,10 +134,11 @@ void *handle_client(void *arg) {
       break;
     } else {
       // Broadcast Message
-      printf("Message from client (%d): %s\n", client_fd, buffer);
+      strcat(message, buffer);
+      printf("MSG: %s", message);
       for(int i = 0; i < MAX_CLIENTS; i++) {
         if(clients[i] != 0) {
-          if(send(clients[i], buffer, BUFFER_MAX, 0) < 0) {
+          if(send(clients[i], message, BUFFER_MAX, 0) < 0) {
             perror("send failed");
             exit(EXIT_FAILURE);
           }
