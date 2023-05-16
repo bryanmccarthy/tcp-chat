@@ -39,6 +39,7 @@ int main(int argc, char *argv[]) {
   // Signal handler for interrupt
   signal(SIGINT, handle_interrupt);
 
+  // Thread to handle receiving broadcasts
   if(pthread_create(&thread, NULL, handle_receive_broadcast, (void *)&sock_fd) < 0) {
     perror("pthread_create failed");
     exit(EXIT_FAILURE);
@@ -46,8 +47,7 @@ int main(int argc, char *argv[]) {
 
   // Client loop
   while(1) {
-    printf("MSG: \n");
-    scanf("%s", buffer);
+    fgets(buffer, BUFFER_MAX, stdin);
     if(send(sock_fd, buffer, BUFFER_MAX, 0) < 0) {
       perror("send failed");
       exit(EXIT_FAILURE);
