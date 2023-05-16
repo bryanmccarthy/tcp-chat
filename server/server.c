@@ -8,6 +8,7 @@
 
 #define PORT 8080
 #define BUFFER_MAX 1024
+#define MAX_CLIENTS 50
 
 void *handle_client(void *arg);
 
@@ -60,7 +61,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Refuse connection if room full
-    if(num_clients == 50) {
+    if(num_clients == MAX_CLIENTS) {
       printf("Room is full, refusing client %d\n", client_fd);
       if(send(client_fd, room_full, strlen(room_full), 0) < 0) {
         perror("send failed");
@@ -71,7 +72,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Add client to list of clients
-    for(int i = 0; i < 50; i++) {
+    for(int i = 0; i < MAX_CLIENTS; i++) {
       if(clients[i] == 0) {
         clients[i] = client_fd;
         num_clients++;
@@ -101,7 +102,7 @@ void *handle_client(void *arg) {
   int client_fd = *(int *)arg;
   char buffer[BUFFER_MAX] = {0};
 
-  if(num_clients == 49) {
+  if(num_clients == MAX_CLIENTS) {
     printf("Client %d refused, room is full", client_fd);
     close(client_fd);
     pthread_exit(NULL);
@@ -120,7 +121,7 @@ void *handle_client(void *arg) {
       num_clients--;
 
       // Remove client from list
-      for(int i = 0; i < 50; i++) {
+      for(int i = 0; i < MAX_CLIENTS; i++) {
         if(clients[i] == client_fd) {
           clients[i] = 0;
         }
@@ -130,7 +131,7 @@ void *handle_client(void *arg) {
     } else {
       // Broadcast Message
       printf("Message from client (%d): %s\n", client_fd, buffer);
-      for(int i = 0; i < 50; i++) {
+      for(int i = 0; i < MAX_CLIENTS; i++) {
         if(clients[i] != 0) {
           if(send(clients[i], buffer, BUFFER_MAX, 0) < 0) {
             perror("send failed");
